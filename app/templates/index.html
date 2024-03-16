@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Todos</title>
+</head>
+<body>
+    <h2>Meine Todos</h2>
+    <ul>
+        {% for todo in todos %}
+        <li>
+            <form action="/check/{{ todo.id }}" method="post" style="display: inline;">
+                <input type="checkbox" name="done" onchange="this.form.submit()" {% if todo.done %} checked {% endif %}>
+            </form>
+            {{ todo.task }}
+            <a href="/edit/{{ todo.id }}">Editieren</a>
+            <form action="/delete/{{ todo.id }}" method="post" style="display: inline;">
+                <button type="submit">Löschen</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    <h3>Neues Todo hinzufügen</h3>
+    <form action="/add" method="post">
+        <input type="text" name="task" required>
+        <button type="submit">Hinzufügen</button>
+    </form>
+    <a href="/logout">Logout</a>
+</body>
+</html>
