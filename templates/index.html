@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
         <meta charset="UTF-11">
         <title>Tuskmanager</title>
@@ -8,9 +8,19 @@
     <h1> Todos</h1>
     <ul>
         {% for todo in todos %}
-        <li>{{ todo['todo'] }}</li>
-        {% endfor %}
+        <li>
+            <input type="checkbox" name="done" {% if todo['done'] %} checked {%endif%} disabled onchange="this.form.submit()">
+            <span {%if todo['done'] %} style="text-decoration: line-through" {%endif%}>{{ todo['task'] }}</span>
+            <a href="{{url_for('check', index=loop.index0)}}">Abhacken</a>
+            <a href="{{url_for('edit', index=loop.index0)}}">Editieren</a>
+            <a href="{{url_for('delete', index=loop.index0)}}">Löschen</a>
 
+        </li>
+        {% endfor %}
     </ul>
+    <form action="/add" method="post">
+        <input type="text" name="todo">
+        <button type="submit">Add Todo</button>
+    </form>      
 </body>
 </html>
