@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+        <meta charset="UTF-11">
+        <title>Tuskmanager</title>
+</head>
+<body>
+    <h1> Todos</h1>
+    <ul>
+        {% for todo in todos %}
+        <li>{{ todo['todo'] }}</li>
+        {% endfor %}
+
+    </ul>
+</body>
+</html>
