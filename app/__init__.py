@@ -37,12 +37,18 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def toDict(self):
+        return dict(id=self.id, username=self.username)
+
 # Datenmodell für Todo-Items
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     task = db.Column(db.String(150))
     done = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def toDict(self):
+        return dict(id=self.id, task=self.task, done=self.done)
 
 # Startseite
 @app.route('/')
@@ -137,13 +143,13 @@ def check(todo_id):
     return redirect(url_for('index'))
 
 # Route für API
-@app.route('/api/getToDo/<userid>')
-def api_getToDo(userid):
-    todo = ToDo.query.filter_by(user_id = userid)
+@app.route('/api/Todo/<userid>')
+def api_Todo(userid):
+    todo = Todo.query.filter_by(id = userid)
     return jsonify([s.toDict() for s in todo])
  
-@app.route('/api/getallusers')
-def api_getallusers():
+@app.route('/api/User')
+def api_User():
     user = User.query.all()
     return jsonify([s.toDict() for s in user])
 
