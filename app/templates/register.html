@@ -2,19 +2,48 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Registrieren</title>
+    <title>Registrierung</title>
+    <!-- Einbindung von Semantic UI CSS für ansprechendes Design. -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
 </head>
 <body>
-    <h2>Registrierung</h2>
-    <form action="/register" method="post">
-        <label for="username">Benutzername:</label>
-        <input type="text" id="username" name="username" required>
-        
-        <label for="password">Passwort:</label>
-        <input type="password" id="password" name="password" required>
-        
-        <button type="submit">Registrieren</button>
-    </form>
-    <a href="/login">Bereits registriert? Zum Login</a>
+    <div class="ui container">
+        <div class="ui middle aligned center aligned grid" style="height: 100vh;">
+            <div class="column" style="max-width: 450px;">
+                <h2 class="ui teal image header">
+                    <div class="content">
+                        Registrierung für deinen Tuskmanager
+                    </div>
+                </h2>
+                <!-- Formular für die Registrierung. -->
+                <form class="ui large form" action="{{ url_for('register') }}" method="post">
+                    <div class="ui stacked segment">
+                        <!-- Eingabefeld für den Benutzernamen. -->
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <i class="user icon"></i>
+                                <input type="text" name="username" placeholder="Benutzername" required>
+                            </div>
+                        </div>
+                        <!-- Eingabefeld für das Passwort. -->
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <i class="lock icon"></i>
+                                <input type="password" name="password" placeholder="Passwort" required>
+                            </div>
+                        </div>
+                        <!-- Button zum Absenden des Formulars. -->
+                        <button class="ui fluid large teal submit button" type="submit">Registrieren</button>
+                    </div>
+                </form>
+                <!-- Link zur Login-Seite. -->
+                <div class="ui message">
+                    Schon ein Konto? <a href="{{ url_for('login') }}">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Einbindung von Semantic UI JavaScript. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
 </body>
 </html>

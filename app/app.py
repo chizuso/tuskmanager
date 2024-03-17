@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_migrate import Migrate
 
 # Initialisiert die Flask-Anwendung
 app = Flask(__name__, template_folder="templates")
@@ -11,6 +12,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'ein_sehr_geheimer_schlüssel'
 # Initialisiert SQLAlchemy mit der Flask-Anwendung
 db = SQLAlchemy(app)
+
+migrate = Migrate(app, db)
 
 # Datenmodell für Benutzer
 class User(db.Model):
@@ -41,7 +44,7 @@ def index():
         user_id = session['user_id']
         user = User.query.get(user_id)
         todos = Todo.query.filter_by(user_id=user.id).all()
-        return render_template('index.html', todos=todos)
+        return render_template('index.html', todos=todos, user=user) #Übergabe des Benutzers an das index.html
     return redirect(url_for('login'))
 
 # Login-Seite; behandelt die Anmelde-Logik
@@ -78,6 +81,23 @@ def logout():
     session.pop('user_id', None)
     return redirect(url_for('login'))
 
+@app.route('/add', methods=['POST'])
+def add_todo():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    # Extrahiert den Task aus dem Formular
+    task = request.form.get('task')
+    if task:  # Stellt sicher, dass der Task nicht leer ist
+        new_todo = Todo(task=task, done=False, user_id=session['user_id'])
+        db.session.add(new_todo)
+        db.session.commit()
+        flash('Todo wurde erfolgreich hinzugefügt.')
+    else:
+        flash('Todo konnte nicht hinzugefügt werden. Task ist leer.')
+
+    return redirect(url_for('index'))
+
 # Route zum Bearbeiten eines Todo-Items; nur für den Besitzer des Todo-Items
 @app.route("/edit/<int:todo_id>", methods=["GET", "POST"])
 def edit(todo_id):
@@ -85,6 +105,7 @@ def edit(todo_id):
         return redirect(url_for('login'))
     
     todo = Todo.query.get_or_404(todo_id)
+
     if todo.user_id != session['user_id']:
         flash('Nicht berechtigt, dieses Todo zu bearbeiten.')
         return redirect(url_for('index'))
@@ -95,6 +116,40 @@ def edit(todo_id):
         return redirect(url_for('index'))
     else:
         return render_template('edit.html', todo=todo)
+
+# Route zum Löschen eines Todo-Items
+@app.route('/delete/<int:todo_id>', methods=['POST'])
+def delete(todo_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    todo = Todo.query.get_or_404(todo_id)
+    if todo.user_id == session['user_id']:
+        db.session.delete(todo)
+        db.session.commit()
+        flash('Todo erfolgreich gelöscht.')
+    else:
+        flash('Nicht berechtigt, dieses Todo zu löschen.')
+    return redirect(url_for('index'))
+
+
+# Route für die Checkbox Funktion bei den Todo-Items.    
+@app.route('/check/<int:todo_id>', methods=['POST'])
+def check(todo_id):
+    if 'user_id' not in session:
+        flash('Bitte einloggen, um Todos zu bearbeiten.')
+        return redirect(url_for('login'))
+
+    todo = Todo.query.get_or_404(todo_id)
+    if todo.user_id == session['user_id']:
+        todo.done = not todo.done
+        db.session.commit()
+        flash('Todo-Status aktualisiert.')
+    else:
+        flash('Nicht berechtigt, diesen Todo zu bearbeiten.')
+
+    return redirect(url_for('index'))
+
 
 # Startet die Flask-Anwendung
 if __name__ == '__main__':

@@ -2,29 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Todos</title>
+    <title>TUSKMANAGER</title>
+    <title>{{ user.username }}'s Todo-Liste</title>
+    <!-- Semantic UI CSS wird für das Styling der Webseite eingebunden. -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
 </head>
 <body>
-    <h2>Meine Todos</h2>
-    <ul>
-        {% for todo in todos %}
-        <li>
-            <form action="/check/{{ todo.id }}" method="post" style="display: inline;">
-                <input type="checkbox" name="done" onchange="this.form.submit()" {% if todo.done %} checked {% endif %}>
-            </form>
-            {{ todo.task }}
-            <a href="/edit/{{ todo.id }}">Editieren</a>
-            <form action="/delete/{{ todo.id }}" method="post" style="display: inline;">
-                <button type="submit">Löschen</button>
-            </form>
-        </li>
-        {% endfor %}
-    </ul>
-    <h3>Neues Todo hinzufügen</h3>
-    <form action="/add" method="post">
-        <input type="text" name="task" required>
-        <button type="submit">Hinzufügen</button>
-    </form>
-    <a href="/logout">Logout</a>
+    <div class="ui container">
+        <!-- Semantic UI Grid wird verwendet, um Inhalte zu zentrieren. -->
+        <div class="ui grid">
+            <div class="row">
+                <div class="column" style="text-align: center;">
+                    <!-- Titel der Seite wird zentriert dargestellt. -->
+                    <h1 class="ui header">{{ user.username }}'s Todo-Liste</h1>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Liste der Todo-Items. -->
+        <ul class="ui relaxed divided list">
+            {% for todo in todos %}
+            <li class="item">
+                <!-- Formular für das Markieren von Todos als erledigt. -->
+                <form action="{{ url_for('check', todo_id=todo.id) }}" method="post" style="display: inline;">
+                    <div class="ui checkbox">
+                        <!-- Checkbox, um Todo als erledigt zu markieren. Änderungen werden sofort gesendet. -->
+                        <input type="checkbox" name="done" onchange="this.form.submit()" {{ 'checked' if todo.done }}>
+                        <label>{{ todo.task }}</label>
+                    </div>
+                </form>
+                <!-- Buttons für weitere Aktionen mit Semantic UI Styling. -->
+                <div style="display: inline; padding-left: 10px;">
+                    <!-- 'Editieren'-Button, blau gefärbt. -->
+                    <a href="/edit/{{ todo.id }}" class="ui blue button">Editieren</a>
+                    <!-- 'Löschen'-Formular und Button, rot gefärbt. -->
+                    <form action="{{ url_for('delete', todo_id=todo.id) }}" method="post" style="display: inline;">
+                        <button type="submit" class="ui red button">Löschen</button>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Formular zum Hinzufügen neuer Todos. -->
+        <h3>Neues Todo hinzufügen</h3>
+        <form action="/add" method="post" class="ui form">
+            <div class="field">
+                <!-- Eingabefeld für den Task des neuen Todos. -->
+                <input type="text" name="task" placeholder="Neues Todo..." required>
+            </div>
+            <!-- Button zum Absenden des neuen Todos, grün gefärbt. -->
+            <button type="submit" class="ui green button">Hinzufügen</button>
+        </form>
+        <!-- Logout-Link. -->
+        <a href="/logout" class="ui button">Logout</a>
+    </div>
+    <!-- Einbindung der Semantic UI JavaScript-Datei für interaktive Komponenten. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
 </body>
 </html>

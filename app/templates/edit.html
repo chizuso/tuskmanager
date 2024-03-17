@@ -2,12 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Todo editieren</title>
+    <title>Todo Editieren</title>
+    <!-- Einbindung von Semantic UI CSS für ansprechendes Design. -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
 </head>
 <body>
-    <form action="/edit/{{ todo.id }}" method="post">
-        <input type="text" name="todo" value="{{ todo.task }}">
-        <button type="submit">Speichern</button>
-    </form>
+    <div class="ui container" style="margin-top: 20px;">
+        <!-- Formular zum Editieren eines Todo-Items. -->
+        <form class="ui form" action="{{ url_for('edit', todo_id=todo.id) }}" method="post">
+            <div class="field">
+                <!-- Eingabefeld für den bearbeiteten Text des Todo-Items. -->
+                <label>Todo</label>
+                <input type="text" name="task" value="{{ todo.task }}" required>
+            </div>
+            <!-- Button zum Absenden des bearbeiteten Todos. -->
+            <button class="ui blue button" type="submit">Speichern</button>
+        </form>
+    </div>
+    <!-- Einbindung von Semantic UI JavaScript. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
 </body>
 </html>
